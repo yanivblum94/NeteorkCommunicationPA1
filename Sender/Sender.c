@@ -3,6 +3,7 @@
 
 #include "winsock2.h"
 #include "../Common/Definitions.h"
+#include "SenderHelper.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -10,38 +11,54 @@ int main(int argc, char* argv[])
 {
 	WSADATA  wsaData;
 	struct sockaddr_in remote_addr;
+	char userInput[MAX_FILE_NAME_LEN] = "";
+	char msgBeforeHamm[MSG_SIZE];
+	SOCKET s;
 
 	//validate input arguments
-	//if (argc != 3) {
-	//	fprintf(stderr, "Error  at  input args, should be 3 but there are %d args\n", argc);
-	//}  
+	if (argc != 3) {
+		fprintf(stderr, "Error  at  input args, should be 3 but there are %d args\n", argc);
+		exit(-1);
+	}
+
 	//WSA Init
 	int  iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-	if (iResult != NO_ERROR)       
+	if (iResult != NO_ERROR) {
 		fprintf(stderr, "Error  at  WSAStartup()\n");
-
-	//Socket Init
-	SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
-	if (s == INVALID_SOCKET) {
-		fprintf(stderr, "socket() generated invalid socket\n");
+		exit(-1);
 	}
-	remote_addr.sin_family = AF_INET; 
-	remote_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-	remote_addr.sin_port = htons(6432);
+	//Socket Init
+	s = SocketInit();
+	remote_addr = InitSockAddr(argv[2], atoi(argv[3]));
 
 	//connect
 	int status = connect(s, (SOCKADDR*)&remote_addr, sizeof(remote_addr));
-	if(status == SOCKET_ERROR)
-		fprintf(stderr, "Error  in socket connect. Last error:%d\n", WSAGetLastError());
+	if (status == SOCKET_ERROR) {
+	fprintf(stderr, "Error  in socket connect. Last error:%d\n", WSAGetLastError());
+	exit(-1);
+	}
 
-	//TODO: add input phase and hamming
+	//main loop process
+	while (1) {
+		printf("enter file name:\n");
+		gets(userInput);
+		if (!strcmp(userInput, "quit"))
+			break;
+		FILE* file = fopen(userInput, "r");
+		if (file == NULL) {
+		fprintf(stderr, "Error  in file open\n");
+		exit(-1);
+		}
+		int blocksOf26 = 0;
+		while (Read26Bytes(file, msgBeforeHamm) == MSG_SIZE) {
+			//TODO: add hamming code and add to send buffer
+			blocksOf26++;
+		}
+		PrintOutput(blocksOf26);
+		fclose(file);
+	}
 
-	//send test message
-	char buf[5];
-	strcpy(buf, "tst");
-	send(s, buf, (int)strlen(buf), 0);
-	int sent = send(s, buf, MSG_SIZE, 0);
-	printf("sent %d bits", sent);
+	CloseConnections(s);
 	return 0;
 }
 
