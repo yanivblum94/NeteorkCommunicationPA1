@@ -10,13 +10,31 @@ int main(int argc, char* argv[])
 {
     char recieved_buffer[1200];
     WSADATA wsaData;
-    struct sockaddr_in my_addr;
-    struct sockaddr_in peer_addr;
+    struct sockaddr_in my_addr, sender_addr, receiver_addr;
+    char userInput[MAX_USER_INPUT_LEN_CHANNEL] = "";
+    char ipAddrSender[MAX_IP_ADDRESS_LEN] = ""; char ipAddrReceiver[MAX_IP_ADDRESS_LEN] = "";
+    int portSender, portRecevier;
+    
+    //validate args
+    if (argc < 3 || argc > 4) {
+        fprintf(stderr, "Error  at  input args, should be 3 or 4 but there are %d args\n", argc);
+        exit(-1);
+    }
 
     //init winsock
     int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (iResult != NO_ERROR)
         printf("Error at WSAStartup()\n");
+
+    while (1) {
+        printf("enter sender details in this format: <ip_addr> <port>\n");
+        gets(userInput);
+        sscanf(userInput, "%s %d", ipAddrSender, &portSender);
+        printf("enter receiver details in this format: <ip_addr> <port>\n");
+        gets(userInput);
+        sscanf(userInput, "%s %d", ipAddrReceiver, &portRecevier);
+
+    }
 
    
     //init socket
