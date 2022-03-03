@@ -141,6 +141,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Sender.c" />
+    <ClCompile Include="SenderHelper.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="SenderHelper.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

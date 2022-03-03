@@ -18,5 +18,13 @@
     <ClCompile Include="Sender.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SenderHelper.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="SenderHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
