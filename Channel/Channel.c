@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
     SOCKET tcp_s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     my_addr.sin_family = AF_INET;
     my_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-    my_addr.sin_port = htons(6342);
+    my_addr.sin_port = htons(6432);
 
     int status = bind(tcp_s, (SOCKADDR*)&my_addr, sizeof(struct sockaddr));
     status = listen(tcp_s, SOMAXCONN);

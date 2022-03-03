@@ -22,14 +22,17 @@ int main(int argc, char* argv[])
 
 	//Socket Init
 	SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
+	if (s == INVALID_SOCKET) {
+		fprintf(stderr, "socket() generated invalid socket\n");
+	}
 	remote_addr.sin_family = AF_INET; 
 	remote_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 	remote_addr.sin_port = htons(6432);
 
 	//connect
-	int status = connect(s, (SOCKADDR*)&remote_addr, sizeof(struct sockaddr));
+	int status = connect(s, (SOCKADDR*)&remote_addr, sizeof(remote_addr));
 	if(status == SOCKET_ERROR)
-		fprintf(stderr, "Error  in socket connect\n");
+		fprintf(stderr, "Error  in socket connect. Last error:%d\n", WSAGetLastError());
 
 	//TODO: add input phase and hamming
 
