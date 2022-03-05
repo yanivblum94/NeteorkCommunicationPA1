@@ -1,11 +1,7 @@
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
 
-#include "winsock2.h"
-#include "../Common/Definitions.h"
 #include "SenderHelper.h"
-#include <stdio.h>
-#include <string.h>
 
 int main(int argc, char* argv[])
 {
@@ -16,10 +12,7 @@ int main(int argc, char* argv[])
 	SOCKET s;
 
 	//validate input arguments
-	if (argc != 3) {
-		fprintf(stderr, "Error  at  input args, should be 3 but there are %d args\n", argc);
-		exit(-1);
-	}
+	ValidateArgs(argc, 3, 3);
 
 	//WSA Init
 	int  iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -29,7 +22,7 @@ int main(int argc, char* argv[])
 	}
 	//Socket Init
 	s = SocketInit();
-	remote_addr = InitSockAddr(argv[2], atoi(argv[3]));
+	InitSockAddr(&remote_addr, atoi(argv[3]), argv[2]);
 
 	//connect
 	int status = connect(s, (SOCKADDR*)&remote_addr, sizeof(remote_addr));
@@ -44,7 +37,7 @@ int main(int argc, char* argv[])
 		gets(userInput);
 		if (!strcmp(userInput, "quit"))
 			break;
-		FILE* file = fopen(userInput, "r");
+		FILE* file = fopen(userInput, "rb");
 		if (file == NULL) {
 		fprintf(stderr, "Error  in file open\n");
 		exit(-1);
@@ -62,4 +55,3 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
-/
