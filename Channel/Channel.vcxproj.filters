@@ -18,5 +18,11 @@
     <ClCompile Include="Channel.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ChannelHelper.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ChannelHelper.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

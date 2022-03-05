@@ -18,5 +18,13 @@
     <ClCompile Include="Receiver.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ReceiverHelper.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ReceiverHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
