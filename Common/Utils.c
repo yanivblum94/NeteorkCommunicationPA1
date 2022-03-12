@@ -40,7 +40,3 @@ void ValidateArgs(int argc, int min, int max) {
 		exit(-1);
 	}
 }
-
-int main() {
-	return 0;
-}
