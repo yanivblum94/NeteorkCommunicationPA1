@@ -8,9 +8,7 @@ int main(int argc, char* argv[])
 {
     char recieved_buffer[1200];
     WSADATA wsaData;
-    struct sockaddr_in my_addr, sender_addr, receiver_addr;
-    char userInput[MAX_USER_INPUT_LEN_CHANNEL] = "";
-    char ipAddrSender[MAX_IP_ADDRESS_LEN] = ""; char ipAddrReceiver[MAX_IP_ADDRESS_LEN] = "";
+    struct sockaddr_in my_addr, sender_addr, receiver_addr;    char ipAddrSender[MAX_IP_ADDRESS_LEN] = ""; char ipAddrReceiver[MAX_IP_ADDRESS_LEN] = "";
     int portSender, portRecevier;
     SOCKET sender_sock, receiver_sock;
     
@@ -25,16 +23,13 @@ int main(int argc, char* argv[])
     sender_sock = SocketInit();
     receiver_sock = SocketInit();
 
-    while (1) {
-        printf("enter sender details in this format: <ip_addr> <port>\n");
-        gets(userInput);
-        sscanf(userInput, "%s %d", ipAddrSender, &portSender);
-        printf("enter receiver details in this format: <ip_addr> <port>\n");
-        gets(userInput);
-        sscanf(userInput, "%s %d", ipAddrReceiver, &portRecevier);
-        InitSockAddr(&sender_addr, portSender, ipAddrSender);
-        InitSockAddr(&receiver_addr, portRecevier, ipAddrReceiver);
-    }
+  /*TODO:
+  1.understand who sends the ip and port of the sender and receiver
+  2. open the relevant sockets, socket addresses structs
+  3. read the message
+  4. add the noise
+  5. send the message
+  */
 
    
     ////init socket

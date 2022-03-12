@@ -3,5 +3,8 @@
 
 #include "../Common/Utils.h"
 
+void AddNoise();
+void ApplyRandom();
+void ApplyDet();
 
 #endif
