@@ -145,6 +145,11 @@
     <ClCompile Include="ChannelHelper.c" />
     <ClCompile Include="ChannelHelper.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.vcxproj">
+      <Project>{9603c3a8-7e54-4f8d-bc9d-906f8276c18c}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
