@@ -33,9 +33,9 @@ typedef struct
 
 void InitChannelParams(int argc, char* argv[], Channel_Params* ch_p);
 void InitChannelSetup(Channel_Params* ch_p, struct sockaddr_in* sender_addr, struct sockaddr_in* receiver_addr);
-bool get_user_input();
-void AddNoise();
-void ApplyRandom();
-void ApplyDet();
+bool get_user_output();
+//void AddNoise();
+//void ApplyRandom();
+//void ApplyDet();
 
 #endif
