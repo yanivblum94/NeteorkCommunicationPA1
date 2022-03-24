@@ -8,3 +8,5 @@ All the constants that we'll use in the project
 #define HAMM_MSG_SIZE 31
 #define MAX_FILE_NAME_LEN 100
 #define MAX_USER_INPUT_LEN_CHANNEL 200
+#define ERROR_PROB_CONSTANT (2^16)
+#define IP_LISTEN_ALL "0.0.0.0"
