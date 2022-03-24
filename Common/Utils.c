@@ -7,6 +7,9 @@ void CloseConnections(SOCKET s) {
 		fprintf(stderr, "Error  in socket closure. Last error:%d\n", WSAGetLastError());
 		exit(-1);
 	}
+}
+
+void wsa_clean() {
 	if (WSACleanup() == SOCKET_ERROR) {
 		fprintf(stderr, "Error  in WAS cleanup. Last error:%d\n", WSAGetLastError());
 		exit(-1);

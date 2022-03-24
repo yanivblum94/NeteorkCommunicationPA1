@@ -3,7 +3,7 @@
 #include "ChannelHelper.h"
 
 
-InitChannelParams(int argc, char* argv[], Channel_Params* ch_p) {
+void InitChannelParams(int argc, char* argv[], Channel_Params* ch_p) {
 
     if (argc == 4)
     {
@@ -39,4 +39,11 @@ void InitChannelSetup(Channel_Params* ch_p, struct sockaddr_in* sender_addr, str
     printf("Receiver's Socket:  IP=%s, port=%d\n", inet_ntoa(receiver_addr->sin_addr), receiver_addr->sin_port);
     assertion(listen(ch_p->sender_sock, SOMAXCONN), "Listening to sender socket failed", WSAGetLastError());
     assertion(listen(ch_p->receiver_sock, SOMAXCONN), "Listening to receiver socket failed", WSAGetLastError());
+}
+
+bool get_user_output() {
+    char input[100] = { 0 };
+    printf("continue? (yes/no)\n");
+    int r = scanf("%99s", input);
+    return strcmp(input, "no");
 }

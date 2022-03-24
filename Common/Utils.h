@@ -22,6 +22,7 @@ void ValidateArgs(int argc, int min, int max);
 bool BindSocket(SOCKET s, struct sockaddr_in* addr);
 int read_from_sock(SOCKET s, char* data, int len);
 int write_to_sock(SOCKET s, char* data, int len);
+void wsa_clean();
 
 inline void assertion(int condition, char* message, int err_idx) {
 	if (not(condition)) {
