@@ -7,6 +7,8 @@
 int main(int argc, char* argv[])
 {
 	int fileSizeBytes;
+	int encodedMsgSize;
+	int blocksOf26;
 
 	WSADATA  wsaData;
 	struct sockaddr_in remote_addr;
@@ -42,23 +44,32 @@ int main(int argc, char* argv[])
 		gets(userInput);
 		if (!strcmp(userInput, "quit"))
 			break;
+
 		FILE* file = fopen(userInput, "rb");
 		if (file == NULL) {
 		fprintf(stderr, "Error  in file open\n");
 		exit(-1);
 		}
+
 		fileSizeBytes = getFileSize(file);
-		int encodedMsgSize = fileSizeBytes * 8 / MSG_SIZE * HAMM_MSG_SIZE;
+		encodedMsgSize = fileSizeBytes * 8 / MSG_SIZE * HAMM_MSG_SIZE;
 		sendFileSize(encodedMsgSize, s);
 		BINARY_MESSAGE = (char*)malloc((fileSizeBytes * 8) * sizeof(char));
 		SENDER_BUFFER = (char*)malloc(encodedMsgSize * sizeof(char));
-		int blocksOf26 = 0;
+		blocksOf26 = 0;
 		while (Read26Bytes(file, msgAfterRead) == MSG_SIZE) {
 			convertMsgToBinaryChars(msgAfterRead, msgRepBinary);
-			charsCopy(BINARY_MESSAGE, msgRepBinary, blocksOf26, MSG_SIZE);
-			//TODO: add hamming code and add to send buffer
+			charsCopy(BINARY_MESSAGE, msgRepBinary, blocksOf26 * 26, MSG_SIZE);
 			blocksOf26++;
 		}
+
+		for (int i = 0; i < (fileSizeBytes*8/MSG_SIZE); i++)
+		{
+			charsCopy(msgRepBinary, BINARY_MESSAGE, i * MSG_SIZE, MSG_SIZE);
+			hammingEncode(msgRepBinary, msgAfterHamming);
+			charsCopy(SENDER_BUFFER, msgAfterHamming, i * HAMM_MSG_SIZE, HAMM_MSG_SIZE);
+		}
+		write_to_sock(s, SENDER_BUFFER, encodedMsgSize);
 		PrintOutput(blocksOf26);
 		fclose(file);
 	}

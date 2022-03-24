@@ -49,27 +49,36 @@ void charsCopy(char* copyTo, char* copyFrom, int start, int length) {
 	}
 }
 
+createIntArray(char* originMsg, int* originMsgInt) {
+	int size = sizeof(originMsg);
+	for (int i = 0; i < size; i++)
+	{
+		originMsgInt[i] = (originMsg[i] == '1') ? 1 : 0;
+	}
+}
+
+
 // func to encode 26bit msg to 31 bit msg with hamming code
 // assuming it's ordered left to right 
 // TODO: test with an example - might have problem with the msg order (little / big endian ) 
-char* hammingDecode(char* originMsg) {   
-	char result[32] = "";
-	int i = 0, j = 0, p1 = 0, p2 = 0, p4 = 0, p8 = 0, p16 = 0, total = 0;
-	while (i <= 32) {
-		total = total + originMsg[i];
-		if ((1 & originMsg[i]) == 1) {
+void hammingEncode(char* originMsg, char* encodedMsg) {   
+	int i = 0, j = 0, p1 = 0, p2 = 0, p4 = 0, p8 = 0, p16 = 0;
+	char* originMsgInt;
+	createIntArray(originMsg, originMsgInt);
+	while (i <= 31) {
+		if ((1 & originMsgInt[i]) == 1) {
 			p1++;
 		}
-		if ((2 & originMsg[i]) == 2) {
+		if ((2 & originMsgInt[i]) == 2) {
 			p2++;
 		}
-		if ((4 & originMsg[i]) == 4) {
+		if ((4 & originMsgInt[i]) == 4) {
 			p4++;
 		}
-		if ((8 & originMsg[i]) == 8) {
+		if ((8 & originMsgInt[i]) == 8) {
 			p8++;
 		}
-		if ((16 & originMsg[i]) == 16) {
+		if ((16 & originMsgInt[i]) == 16) {
 			p16++;
 		}
 		i++;
@@ -79,33 +88,34 @@ char* hammingDecode(char* originMsg) {
 		switch (i)
 		{
 		case 0:
-			result[i] = (total % 2) ? '1' : '0';
+			encodedMsg[i] = (total % 2) ? '1' : '0';
 			break;
 		case 1:
-			result[i] = (p1 % 2) ? '1' : '0';
+			encodedMsg[i] = (p1 % 2) ? '1' : '0';
 			break;
 		case 2:
-			result[i] = (p2 % 2) ? '1' : '0';
+			encodedMsg[i] = (p2 % 2) ? '1' : '0';
 			break;
 		case 4:
-			result[i] = (p4 % 2) ? '1' : '0';
+			encodedMsg[i] = (p4 % 2) ? '1' : '0';
 			break;
 		case 8:
-			result[i] = (p8 % 2) ? '1' : '0';
+			encodedMsg[i] = (p8 % 2) ? '1' : '0';
 			break;
 		case 16:
-			result[i] = (p16 % 2) ? '1' : '0';
+			encodedMsg[i] = (p16 % 2) ? '1' : '0';
 			break;
 		default:
-			result[i] = originMsg[j];
+			encodedMsg[i] = originMsgInt[j];
 			j++;
 		}
 		i++;
 	}
-	return result;
 }
 
-char* hammingEncode(char* codedMsg) {
+
+// should be in the reciver + didnt check it yet 
+char* hammingDecode(char* codedMsg) {
 	int i = 1, xorResult = 0;
 	int total = 0;
 	char result[26] = "";
