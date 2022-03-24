@@ -10,3 +10,4 @@ All the constants that we'll use in the project
 #define MAX_USER_INPUT_LEN_CHANNEL 200
 #define ERROR_PROB_CONSTANT (2^16)
 #define IP_LISTEN_ALL "0.0.0.0"
+#define SIZE_MSG_LEN 10

@@ -14,6 +14,7 @@ typedef struct
 	uint32_t message_size;
 	char* message;
 	char* message_sent;
+	int msg_size;
 	SOCKET receiver_sock;
 	SOCKET sender_sock;
 	SOCKET sender_accepted_sock;
@@ -22,7 +23,6 @@ typedef struct
 	char* ip;
 	int sender_port;
 	int recevier_port;
-	bool quit;
 	int flipped_bits;
 	int prob;
 	int seed;

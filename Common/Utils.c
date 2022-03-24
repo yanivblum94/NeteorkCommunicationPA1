@@ -51,3 +51,15 @@ bool BindSocket(SOCKET s, struct sockaddr_in* addr) {
 	assert(cond == 0, "Binding Failed");
 	return true;
 }
+
+int read_from_sock(SOCKET s, char* data, int len) {
+	int res = recv(s, data, len, 0);
+	assert(res == len, "Readind from socket failed");
+	return res;
+}
+
+int write_to_sock(SOCKET s, char* data, int len) {
+	int res = send(s, data, len, 0);
+	assert(res == len, "Writing to socket failed");
+	return res;
+}
