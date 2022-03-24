@@ -21,7 +21,7 @@ void PrintOutput(int blocks) {
 // func to encode 26bit msg to 31 bit msg with hamming code
 // assuming it's ordered left to right 
 // TODO: test with an example - might have problem with the msg order (little / big endian ) 
-const char* hammingDecode(char* originMsg) {
+char* hammingDecode(char* originMsg) {   
 	char result[32] = "";
 	int i = 0, j = 0, p1 = 0, p2 = 0, p4 = 0, p8 = 0, p16 = 0, total = 0;
 	while (i <= 32) {
@@ -74,7 +74,7 @@ const char* hammingDecode(char* originMsg) {
 	return result;
 }
 
-const char* hammingEncode(char* codedMsg) {
+char* hammingEncode(char* codedMsg) {
 	int i = 1, xorResult = 0;
 	int total = 0;
 	char result[26] = "";
