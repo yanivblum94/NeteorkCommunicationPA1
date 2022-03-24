@@ -42,6 +42,13 @@ void convertCharToBinary(char c, char* binaryCharRep) {
 }
 
 
+void charsCopy(char* copyTo, char* copyFrom, int start, int length) {
+	for (int i = 0; i < length; i++)
+	{
+		copyTo[start + i] = copyFrom[i];
+	}
+}
+
 // func to encode 26bit msg to 31 bit msg with hamming code
 // assuming it's ordered left to right 
 // TODO: test with an example - might have problem with the msg order (little / big endian ) 

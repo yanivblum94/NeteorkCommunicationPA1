@@ -1,5 +1,6 @@
 /*
-All the constants that we'll use in the project
+All the constants that we'll use in the
+project
 */
 
 #define MAX_BUFFER 1024
