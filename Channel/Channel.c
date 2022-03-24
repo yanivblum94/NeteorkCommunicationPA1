@@ -6,55 +6,27 @@
 
 int main(int argc, char* argv[])
 {
-    char recieved_buffer[1200];
-    WSADATA wsaData;
-    struct sockaddr_in my_addr, sender_addr, receiver_addr;
-    char userInput[MAX_USER_INPUT_LEN_CHANNEL] = "";
-    char ipAddrSender[MAX_IP_ADDRESS_LEN] = ""; char ipAddrReceiver[MAX_IP_ADDRESS_LEN] = "";
-    int portSender, portRecevier;
-    SOCKET sender_sock, receiver_sock;
+    bool to_continue = true;
+    struct sockaddr_in sender_addr, receiver_addr;    
+    fd_set sender_fds, receiver_fds;
+    Channel_Params* channel_p =(Channel_Params*) malloc(sizeof(channel_p));
+    int size;
     
     //validate args
     ValidateArgs(argc, 3, 4);
+    InitChannelParams(argc, argv, channel_p);
+    InitChannelSetup(channel_p, &sender_addr, &receiver_addr);
+    //needs to generate noise
+    while (to_continue) {
+        channel_p->sender_accepted_sock = accpet(channel_p->sender_sock, NULL, NULL);
+        assertion(INVALID_SOCKET == channel_p->sender_accepted_sock, "Accept failed on Sender's Socket", WSAGetLastError());
+        channel_p->receiver_accepted_sock = accept(channel_p->receiver_sock, NULL, NULL);
+        assertion(INVALID_SOCKET == channel_p->receiver_accepted_sock, "Accept failed on Receiver's Socket", WSAGetLastError());
 
-    //init winsock
-    int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-    if (iResult != NO_ERROR)
-        printf("Error at WSAStartup()\n");
-
-    sender_sock = SocketInit();
-    receiver_sock = SocketInit();
-
-    while (1) {
-        printf("enter sender details in this format: <ip_addr> <port>\n");
-        gets(userInput);
-        sscanf(userInput, "%s %d", ipAddrSender, &portSender);
-        printf("enter receiver details in this format: <ip_addr> <port>\n");
-        gets(userInput);
-        sscanf(userInput, "%s %d", ipAddrReceiver, &portRecevier);
-        InitSockAddr(&sender_addr, portSender, ipAddrSender);
-        InitSockAddr(&receiver_addr, portRecevier, ipAddrReceiver);
     }
 
-   
-    ////init socket
-    //SOCKET tcp_s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    //my_addr.sin_family = AF_INET;
-    //my_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-    //my_addr.sin_port = htons(6432);
 
-    //int status = bind(tcp_s, (SOCKADDR*)&my_addr, sizeof(struct sockaddr));
-    //status = listen(tcp_s, SOMAXCONN);
-    ////int len = sizeof(peer_addr);
-
-    //while (1)
-    //{
-    //    printf("hi\n");
-    //    SOCKET s = accept(tcp_s, NULL, NULL);
-    //    printf("hi2\n");
-    //    int received = recv(s, recieved_buffer, MSG_SIZE, 0);
-    //    if (received) printf("%s", recieved_buffer);
-    //}
+    free(channel_p);
     return 0;
 }
 

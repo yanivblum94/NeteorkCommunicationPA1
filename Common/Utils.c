@@ -14,6 +14,11 @@ void CloseConnections(SOCKET s) {
 }
 
 SOCKET SocketInit() {
+	WSADATA wsaData;
+	//init winsock
+	int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+	if (iResult != NO_ERROR)
+		printf("Error at WSAStartup()\n");
 	SOCKET s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (s == INVALID_SOCKET) {
 		fprintf(stderr, "socket() generated invalid socket, Last error:%d\n", WSAGetLastError());
@@ -39,4 +44,22 @@ void ValidateArgs(int argc, int min, int max) {
 		fprintf(stderr, "Error  at  input args, should be < %d or > %d but there are %d args\n", min, max, argc);
 		exit(-1);
 	}
+}
+
+bool BindSocket(SOCKET s, struct sockaddr_in* addr) {
+	int cond = ((bind(s, (SOCKADDR*)addr, sizeof(struct sockaddr))) > 0);
+	assert(cond == 0, "Binding Failed");
+	return true;
+}
+
+int read_from_sock(SOCKET s, char* data, int len) {
+	int res = recv(s, data, len, 0);
+	assert(res == len, "Readind from socket failed");
+	return res;
+}
+
+int write_to_sock(SOCKET s, char* data, int len) {
+	int res = send(s, data, len, 0);
+	assert(res == len, "Writing to socket failed");
+	return res;
 }
