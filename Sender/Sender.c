@@ -8,7 +8,9 @@ int main(int argc, char* argv[])
 	WSADATA  wsaData;
 	struct sockaddr_in remote_addr;
 	char userInput[MAX_FILE_NAME_LEN] = "";
-	char msgBeforeHamm[MSG_SIZE];
+	char msgAfterRead[MSG_SIZE];
+	char msgRepBinary[MSG_SIZE * 8];
+	char msgAfterHamming[HAMM_MSG_SIZE];
 	SOCKET s;
 
 	//validate input arguments
@@ -43,7 +45,12 @@ int main(int argc, char* argv[])
 		exit(-1);
 		}
 		int blocksOf26 = 0;
-		while (Read26Bytes(file, msgBeforeHamm) == MSG_SIZE) {
+		while (Read26Bytes(file, msgAfterRead) == MSG_SIZE) {
+			convertMsgToBinaryChars(msgAfterRead, msgRepBinary);
+			for (int i = 0; i < 8; i++)
+			{
+
+			}
 			//TODO: add hamming code and add to send buffer
 			blocksOf26++;
 		}

@@ -16,6 +16,30 @@ void PrintOutput(int blocks) {
 	printf("sent: %d bytes\n", (blocks * HAMM_MSG_SIZE));
 }
 
+// converting 26 bytes (chars) to 208 binary chars representing 
+void convertMsgToBinaryChars(char* originMsg, char* binaryMsg) {
+	int size = sizeof(originMsg);
+	char* temp;
+	for (int i = 0; i < size; i++)
+	{
+		convertCharToBinary(originMsg[i], temp);
+		for (int j = 0; j < 8; j++)
+		{
+			binaryMsg[i * 8 + j] = temp[j];
+		}
+	}
+}
+
+
+// converting char to 8 char array with it's binary represantation 
+void convertCharToBinary(char c, char* binaryCharRep) {
+	int temp;
+	for (int i = 0; i < 8; i++)
+	{
+		temp = (c >> i) & 1;
+		binaryCharRep[7 - i] = (temp) ? '1' :'0';
+	}
+}
 
 
 // func to encode 26bit msg to 31 bit msg with hamming code
