@@ -2,13 +2,20 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include "SenderHelper.h"
+#include "Sender.h"
 
 int main(int argc, char* argv[])
 {
+	int fileSizeBytes;
+	int encodedMsgSize;
+	int blocksOf26;
+
 	WSADATA  wsaData;
 	struct sockaddr_in remote_addr;
 	char userInput[MAX_FILE_NAME_LEN] = "";
-	char msgBeforeHamm[MSG_SIZE];
+	char msgAfterRead[MSG_SIZE];
+	char msgRepBinary[MSG_SIZE * 8];
+	char msgAfterHamming[HAMM_MSG_SIZE];
 	SOCKET s;
 
 	//validate input arguments
@@ -37,16 +44,32 @@ int main(int argc, char* argv[])
 		gets(userInput);
 		if (!strcmp(userInput, "quit"))
 			break;
+
 		FILE* file = fopen(userInput, "rb");
 		if (file == NULL) {
 		fprintf(stderr, "Error  in file open\n");
 		exit(-1);
 		}
-		int blocksOf26 = 0;
-		while (Read26Bytes(file, msgBeforeHamm) == MSG_SIZE) {
-			//TODO: add hamming code and add to send buffer
+
+		fileSizeBytes = getFileSize(file);
+		encodedMsgSize = fileSizeBytes * 8 / MSG_SIZE * HAMM_MSG_SIZE;
+		sendFileSize(encodedMsgSize, s);
+		BINARY_MESSAGE = (char*)malloc((fileSizeBytes * 8) * sizeof(char));
+		SENDER_BUFFER = (char*)malloc(encodedMsgSize * sizeof(char));
+		blocksOf26 = 0;
+		while (Read26Bytes(file, msgAfterRead) == MSG_SIZE) {
+			convertMsgToBinaryChars(msgAfterRead, msgRepBinary);
+			charsCopy(BINARY_MESSAGE, msgRepBinary, blocksOf26 * 26, MSG_SIZE);
 			blocksOf26++;
 		}
+
+		for (int i = 0; i < (fileSizeBytes*8/MSG_SIZE); i++)
+		{
+			charsCopy(msgRepBinary, BINARY_MESSAGE, i * MSG_SIZE, MSG_SIZE);
+			hammingEncode(msgRepBinary, msgAfterHamming);
+			charsCopy(SENDER_BUFFER, msgAfterHamming, i * HAMM_MSG_SIZE, HAMM_MSG_SIZE);
+		}
+		write_to_sock(s, SENDER_BUFFER, encodedMsgSize);
 		PrintOutput(blocksOf26);
 		fclose(file);
 	}
@@ -55,3 +78,21 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
+// return the number of BYTES in the file 
+int getFileSize(FILE* file) {
+	int count = 0; 
+	char* c[26];
+	while (fread(c, 1, MSG_SIZE, file) > 0) {
+		count++;
+	}
+	rewind(file);
+	return count * MSG_SIZE;
+}
+
+// function to send the file's size given with int
+// TODO: change 10 to the MACRO Yaniv added
+void sendFileSize(int size, SOCKET s) {
+	char* filesSizeInString[10];
+	itoa(size, filesSizeInString, 10);
+	// SEND with Yaniv's function 
+}

@@ -145,6 +145,7 @@
     <ClCompile Include="SenderHelper.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Sender.h" />
     <ClInclude Include="SenderHelper.h" />
   </ItemGroup>
   <ItemGroup>
