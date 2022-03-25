@@ -19,7 +19,7 @@ void PrintOutput(int blocks) {
 // converting 26 bytes (chars) to 208 binary chars representing 
 void convertMsgToBinaryChars(char* originMsg, char* binaryMsg) {
 	int size = sizeof(originMsg);
-	char* temp;
+	char* temp[26];
 	for (int i = 0; i < size; i++)
 	{
 		convertCharToBinary(originMsg[i], temp);
@@ -48,69 +48,70 @@ void charsCopy(char* copyTo, char* copyFrom, int start, int length) {
 		copyTo[start + i] = copyFrom[i];
 	}
 }
+/*
+	function to create a 32 long char array from the origin array with integers 
+	and each redundant bit has 0 initially
+*/
 
-createIntArray(char* originMsg, int* originMsgInt) {
+void createIntArray(char* originMsg, int* originMsgInt) {
 	int size = sizeof(originMsg);
+	int j = 0, i=0;
+	originMsgInt[0] = 0;
+	while (i <= 32) {
+		if (i == 1 || i == 2 || i == 4 || i == 8 || i == 16) {
+			originMsgInt[i] = 0;
+		}
+		else {
+			originMsgInt[i] = (originMsg[j] == '1') ? 1 : 0;
+			j++;
+		}
+		i++;
+	}
+}
+
+void createCharArray(char* targetArray, int* sourceArray) {
+	int size = sizeof(sourceArray);
 	for (int i = 0; i < size; i++)
 	{
-		originMsgInt[i] = (originMsg[i] == '1') ? 1 : 0;
+		targetArray[i] = (sourceArray[i]) ? '1' : '0';
 	}
 }
 
 
 // func to encode 26bit msg to 31 bit msg with hamming code
-// assuming it's ordered left to right 
 // TODO: test with an example - might have problem with the msg order (little / big endian ) 
 void hammingEncode(char* originMsg, char* encodedMsg) {   
-	int i = 0, j = 0, p1 = 0, p2 = 0, p4 = 0, p8 = 0, p16 = 0;
-	char* originMsgInt;
+	int i = 1,  p1 = 0, p2 = 0, p4 = 0, p8 = 0, p16 = 0;
+	int* originMsgInt[32];
+	char* temp[32];
 	createIntArray(originMsg, originMsgInt);
-	while (i <= 31) {
-		if ((1 & originMsgInt[i]) == 1) {
+	while (i <= 32) {
+		if ((1 & i) == 1 && originMsgInt[i]) {
 			p1++;
 		}
-		if ((2 & originMsgInt[i]) == 2) {
+		if ((2 & i) == 2 && originMsgInt[i]) {
 			p2++;
 		}
-		if ((4 & originMsgInt[i]) == 4) {
+		if ((4 & i) == 4 && originMsgInt[i]) {
 			p4++;
 		}
-		if ((8 & originMsgInt[i]) == 8) {
+		if ((8 & i) == 8 && originMsgInt[i]) {
 			p8++;
 		}
-		if ((16 & originMsgInt[i]) == 16) {
+		if ((16 & i) == 16 && originMsgInt[i]) {
 			p16++;
 		}
 		i++;
 	}
-	i = 0;
-	while (i <= 32) {
-		switch (i)
-		{
-		case 0:
-			encodedMsg[i] = (total % 2) ? '1' : '0';
-			break;
-		case 1:
-			encodedMsg[i] = (p1 % 2) ? '1' : '0';
-			break;
-		case 2:
-			encodedMsg[i] = (p2 % 2) ? '1' : '0';
-			break;
-		case 4:
-			encodedMsg[i] = (p4 % 2) ? '1' : '0';
-			break;
-		case 8:
-			encodedMsg[i] = (p8 % 2) ? '1' : '0';
-			break;
-		case 16:
-			encodedMsg[i] = (p16 % 2) ? '1' : '0';
-			break;
-		default:
-			encodedMsg[i] = originMsgInt[j];
-			j++;
-		}
-		i++;
-	}
+	originMsgInt[1] = (p1 % 2) ? 1 : 0;
+	originMsgInt[2] = (p2 % 2) ? 1 : 0;
+	originMsgInt[4] = (p4 % 2) ? 1 : 0;
+	originMsgInt[8] = (p8 % 2) ? 1 : 0;
+	originMsgInt[16] = (p16 % 2) ? 1 : 0;
+
+	createCharArray(temp, originMsgInt);
+	charsCopy(encodedMsg, temp, 1, 31);
+
 }
 
 

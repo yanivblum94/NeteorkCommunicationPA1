@@ -1,15 +1,14 @@
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
+#define _CRT_NONSTDC_NO_DEPRECATE
 
 #include "SenderHelper.h"
 #include "Sender.h"
 
 int main(int argc, char* argv[])
 {
-	int fileSizeBytes;
-	int encodedMsgSize;
-	int blocksOf26;
-
+	int fileSizeBytes, encodedMsgSize, blocksOf26;
+	
 	WSADATA  wsaData;
 	struct sockaddr_in remote_addr;
 	char userInput[MAX_FILE_NAME_LEN] = "";
@@ -89,10 +88,9 @@ int getFileSize(FILE* file) {
 	return count * MSG_SIZE;
 }
 
-// function to send the file's size given with int
-// TODO: change 10 to the MACRO Yaniv added
+// function to send the file's size as string given with int
 void sendFileSize(int size, SOCKET s) {
-	char* filesSizeInString[10];
-	itoa(size, filesSizeInString, 10);
-	// SEND with Yaniv's function 
+	char* filesSizeInString[SIZE_MSG_LEN];
+	itoa(size, filesSizeInString, SIZE_MSG_LEN);
+	write_to_sock(s, filesSizeInString, SIZE_MSG_LEN);
 }
