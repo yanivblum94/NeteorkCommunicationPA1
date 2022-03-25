@@ -12,3 +12,4 @@ project
 #define ERROR_PROB_CONSTANT (2^16)
 #define IP_LISTEN_ALL "0.0.0.0"
 #define SIZE_MSG_LEN 10
+#define MAX_FILE_NAME_LEN 2048
