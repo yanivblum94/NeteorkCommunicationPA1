@@ -3,7 +3,7 @@
 #define _CRT_NONSTDC_NO_DEPRECATE
 
 #include "SenderHelper.h"
-#include "Sender.h"
+
 
 int main(int argc, char* argv[])
 {
@@ -11,7 +11,7 @@ int main(int argc, char* argv[])
 	
 	WSADATA  wsaData;
 	struct sockaddr_in remote_addr;
-	char userInput[MAX_FILE_NAME_LEN] = "";
+	char userInput[MAX_FILE_NAME_LEN];
 	char msgAfterRead[MSG_SIZE];
 	char msgRepBinary[MSG_SIZE * 8];
 	char msgAfterHamming[HAMM_MSG_SIZE];
@@ -20,36 +20,24 @@ int main(int argc, char* argv[])
 	//validate input arguments
 	ValidateArgs(argc, 3, 3);
 
-	//WSA Init
-	int  iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-	if (iResult != NO_ERROR) {
-		fprintf(stderr, "Error  at  WSAStartup()\n");
-		exit(-1);
-	}
 	//Socket Init
 	s = SocketInit();
+	memset(&remote_addr, 0, sizeof(remote_addr));
 	InitSockAddr(&remote_addr, atoi(argv[3]), argv[2]);
 
 	//connect
-	int status = connect(s, (SOCKADDR*)&remote_addr, sizeof(remote_addr));
-	if (status == SOCKET_ERROR) {
-	fprintf(stderr, "Error  in socket connect. Last error:%d\n", WSAGetLastError());
-	exit(-1);
-	}
+	assertion(connect(s, (SOCKADDR*)&remote_addr, sizeof(struct sockaddr)) != SOCKET_ERROR, "connection falied", WSAGetLastError());
+
 
 	//main loop process
 	while (1) {
 		printf("enter file name:\n");
-		gets(userInput);
+		assertion(scanf("%s", userInput) == 1, "Error in response in server", WSAGetLastError());
 		if (!strcmp(userInput, "quit"))
 			break;
 
-		FILE* file = fopen(userInput, "rb");
-		if (file == NULL) {
-		fprintf(stderr, "Error  in file open\n");
-		exit(-1);
-		}
-
+		FILE* file = fopen(userInput, "r");
+		assertion(file != NULL, "Error in open file in server.", WSAGetLastError());
 		fileSizeBytes = getFileSize(file);
 		encodedMsgSize = fileSizeBytes * 8 / MSG_SIZE * HAMM_MSG_SIZE;
 		sendFileSize(encodedMsgSize, s);
@@ -70,27 +58,18 @@ int main(int argc, char* argv[])
 		}
 		write_to_sock(s, SENDER_BUFFER, encodedMsgSize);
 		PrintOutput(blocksOf26);
-		fclose(file);
+
+		FinishOneRound(s, file);
+
+		//reconnect to socket
+		s = SocketInit();
+		assertion(connect(s, (SOCKADDR*)&remote_addr, sizeof(struct sockaddr)) != SOCKET_ERROR, "connection falied", WSAGetLastError());
 	}
 
+	shutdown(s, SD_BOTH);
 	CloseConnections(s);
+	wsa_clean();
 	return 0;
 }
 
-// return the number of BYTES in the file 
-int getFileSize(FILE* file) {
-	int count = 0; 
-	char* c[26];
-	while (fread(c, 1, MSG_SIZE, file) > 0) {
-		count++;
-	}
-	rewind(file);
-	return count * MSG_SIZE;
-}
 
-// function to send the file's size as string given with int
-void sendFileSize(int size, SOCKET s) {
-	char* filesSizeInString[SIZE_MSG_LEN];
-	itoa(size, filesSizeInString, SIZE_MSG_LEN);
-	write_to_sock(s, filesSizeInString, SIZE_MSG_LEN);
-}

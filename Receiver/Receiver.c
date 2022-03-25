@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
 	ValidateArgs(argc, 3, 3);
 	Receiver_Params* receiver_p = (Receiver_Params*)malloc(sizeof(Receiver_Params));
 	InitServerParams(argv, receiver_p);
-	OpenInputFile(receiver_p);
+	OpenOutputFile(receiver_p);
 	struct sockaddr_in channel_addr;
 	memset(&channel_addr, 0, sizeof(channel_addr));
 	InitSockAddr(&channel_addr, receiver_p->ip, receiver_p->port);
@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
 		//get ready for a new round
 		receiver_p->socket = SocketInit();
 		assertion(connect(receiver_p->socket, (SOCKADDR*)&channel_addr, sizeof(struct sockaddr)) != SOCKET_ERROR, "connection falied", WSAGetLastError());
-		OpenInputFile(receiver_p);
+		OpenOutputFile(receiver_p);
 	}
 
 	shutdown(receiver_p->socket, SD_BOTH);
