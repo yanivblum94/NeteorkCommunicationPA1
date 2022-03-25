@@ -25,7 +25,7 @@ int write_to_sock(SOCKET s, char* data, int len);
 void wsa_clean();
 
 inline void assertion(int condition, char* message, int err_idx) {
-	if (not(condition)) {
+	if (!(condition)) {
 		fprintf(stderr, "Assertion Error: %s [%d]\n", message, err_idx);
 		exit(-1);
 	}
