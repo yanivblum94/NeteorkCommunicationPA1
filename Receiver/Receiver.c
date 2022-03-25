@@ -5,49 +5,40 @@
 
 int main(int argc, char* argv[])
 {
-	WSADATA  wsaData;
-	struct sockaddr_in remote_addr;
-	char userInput[MAX_FILE_NAME_LEN] = "";
-	char msgWithHamm[HAMM_MSG_SIZE];
-	SOCKET s;
-
-	//validate input arguments
+	int size_temp;
+	char msg_size_str[SIZE_MSG_LEN];
 	ValidateArgs(argc, 3, 3);
-
-	//WSA Init
-	int  iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-	if (iResult != NO_ERROR) {
-		fprintf(stderr, "Error  at  WSAStartup()\n");
-		exit(-1);
-	}
-	//Socket Init
-	s = SocketInit();
-	InitSockAddr(&remote_addr, atoi(argv[3]), argv[2]);
-	if ((bind(s, (struct sockaddr *)&remote_addr, sizeof(remote_addr))) < 0) {
-		fprintf(stderr, "bind failed with error %d \n", WSAGetLastError());
-		exit(-1);
-	}
-
+	Receiver_Params* receiver_p = (Receiver_Params*)malloc(sizeof(Receiver_Params));
+	InitServerParams(argv, receiver_p);
+	OpenInputFile(receiver_p);
+	struct sockaddr_in channel_addr;
+	memset(&channel_addr, 0, sizeof(channel_addr));
+	InitSockAddr(&channel_addr, receiver_p->ip, receiver_p->port);
+	assertion(connect(receiver_p->socket, (SOCKADDR*)&channel_addr, sizeof(struct sockaddr)) != SOCKET_ERROR, "connection falied", WSAGetLastError());
 	//main loop process
-	while (1) {
-		printf("enter file name:\n");
-		gets(userInput);
-		if (!strcmp(userInput, "quit"))
-			break;
-		FILE* file = fopen(userInput, "wb");
-		if (file == NULL) {
-			fprintf(stderr, "Error  in file open\n");
-			exit(-1);
-		}
-		int blocksOf31 = 0, errorsCorrected=0;
-		while (1) {
-			//TODO:read from channel, add hamming decoding and error correction and write to file
-			blocksOf31++;
-		}
-		PrintOutput(blocksOf31, errorsCorrected);
-		fclose(file);
+	while (!receiver_p->quit) {
+		//read message size and data from channel
+		size_temp = read_from_sock(receiver_p->socket, msg_size_str, SIZE_MSG_LEN);
+		AllocateBuffersSizes(receiver_p, msg_size_str);
+		size_temp = read_from_sock(receiver_p->socket, receiver_p->encoded_message, receiver_p->encoded_message_size);
+
+		//add hamming decode
+
+		//write decoded message to file
+		fwrite(receiver_p->origin_message,sizeof(char), (receiver_p->decoded_message_size / 8), receiver_p->file);
+		PrintOutput(receiver_p);
+
+		//clean current run
+		CleanReceiverRound(receiver_p);
+		//get ready for a new round
+		receiver_p->socket = SocketInit();
+		assertion(connect(receiver_p->socket, (SOCKADDR*)&channel_addr, sizeof(struct sockaddr)) != SOCKET_ERROR, "connection falied", WSAGetLastError());
+		OpenInputFile(receiver_p);
 	}
 
-	CloseConnections(s);
+	shutdown(receiver_p->socket, SD_BOTH);
+	CloseConnections(receiver_p->socket);
+	wsa_clean();
+	free(receiver_p);
 	return 0;
 }
