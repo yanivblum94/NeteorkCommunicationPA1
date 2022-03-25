@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
 	//Socket Init
 	s = SocketInit();
 	memset(&remote_addr, 0, sizeof(remote_addr));
-	InitSockAddr(&remote_addr, atoi(argv[3]), argv[2]);
+	InitSockAddr(&remote_addr, atoi(argv[2]), argv[1]);
 
 	//connect
 	assertion(connect(s, (SOCKADDR*)&remote_addr, sizeof(struct sockaddr)) != SOCKET_ERROR, "connection falied", WSAGetLastError());

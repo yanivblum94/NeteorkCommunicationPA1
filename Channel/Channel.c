@@ -1,3 +1,4 @@
+
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
 
@@ -12,14 +13,16 @@ int main(int argc, char* argv[])
     int size_temp;
     //validate args
     ValidateArgs(argc, 3, 4);
+
     InitChannelParams(argc, argv, channel_p);
     InitChannelSetup(channel_p, &sender_addr, &receiver_addr);
     //needs to generate noise
     while (to_continue) {
         channel_p->sender_accepted_sock = accept(channel_p->sender_sock, NULL, NULL);
-        assertion(INVALID_SOCKET == channel_p->sender_accepted_sock, "Accept failed on Sender's Socket", WSAGetLastError());
+        assertion(INVALID_SOCKET != channel_p->sender_accepted_sock, "Accept failed on Sender's Socket", WSAGetLastError());
         channel_p->receiver_accepted_sock = accept(channel_p->receiver_sock, NULL, NULL);
-        assertion(INVALID_SOCKET == channel_p->receiver_accepted_sock, "Accept failed on Receiver's Socket", WSAGetLastError());
+        assertion(INVALID_SOCKET != channel_p->receiver_accepted_sock, "Accept failed on Receiver's Socket", WSAGetLastError());
+
 
         //read size and message
         size_temp = read_from_sock(channel_p->sender_accepted_sock, channel_p->msg_size_str, SIZE_MSG_LEN);

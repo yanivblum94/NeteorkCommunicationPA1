@@ -13,12 +13,11 @@ int main(int argc, char* argv[])
 	ValidateArgs(argc, 3, 3);
 	Receiver_Params* receiver_p = (Receiver_Params*)malloc(sizeof(Receiver_Params));
 	InitServerParams(argv, receiver_p);
-	OpenOutputFile(receiver_p);
 	struct sockaddr_in channel_addr;
 	memset(&channel_addr, 0, sizeof(channel_addr));
-	InitSockAddr(&channel_addr, receiver_p->ip, receiver_p->port);
+	InitSockAddr(&channel_addr, receiver_p->port, receiver_p->ip);
 	assertion(connect(receiver_p->socket, (SOCKADDR*)&channel_addr, sizeof(struct sockaddr)) != SOCKET_ERROR, "connection falied", WSAGetLastError());
-	
+	OpenOutputFile(receiver_p);
 	//main loop process
 	while (!receiver_p->quit) {
 		//read message size and data from channel
