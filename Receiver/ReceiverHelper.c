@@ -12,7 +12,7 @@ void InitServerParams(char* argv[], Receiver_Params* receiver_p) {
 	receiver_p->quit = false;
 }
 
-void OpenInputFile(Receiver_Params* receiver_p) {
+void OpenOutputFile(Receiver_Params* receiver_p) {
 	printf("Enter file name:\n");
 	assertion(scanf("%s", receiver_p->filename) == 1, "Error in response in server", WSAGetLastError());
 	if (strcmp(receiver_p->filename, "quit"))
