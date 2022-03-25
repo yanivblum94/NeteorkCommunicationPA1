@@ -1,5 +1,6 @@
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
+#define _CRT_NONSTDC_NO_DEPRECATE
 #include "SenderHelper.h"
 
 int Read26Bytes(FILE* file, char* buf) {
@@ -148,4 +149,30 @@ char* hammingDecode(char* codedMsg) {
 
 	return result;
 
+}
+
+// return the number of BYTES in the file 
+int getFileSize(FILE* file) {
+	int count = 0;
+	char* c[26];
+	while (fread(c, 1, MSG_SIZE, file) > 0) {
+		count++;
+	}
+	rewind(file);
+	return count * MSG_SIZE;
+}
+
+// function to send the file's size as string given with int
+void sendFileSize(int size, SOCKET s) {
+	char* filesSizeInString[SIZE_MSG_LEN];
+	itoa(size, filesSizeInString, SIZE_MSG_LEN);
+	write_to_sock(s, filesSizeInString, SIZE_MSG_LEN);
+}
+
+void FinishOneRound(SOCKET s, FILE* file) {
+	CloseConnections(s);
+	free(SENDER_BUFFER);
+	free(BINARY_MESSAGE);
+	wsa_clean();
+	fclose(file);
 }

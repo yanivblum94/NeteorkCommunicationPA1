@@ -20,7 +20,7 @@ typedef struct {
 }Receiver_Params;
 
 void InitServerParams(char* argv[], Receiver_Params* receiver_p);
-void OpenInputFile(Receiver_Params* receiver_p);
+void OpenOutputFile(Receiver_Params* receiver_p);
 void PrintOutput(Receiver_Params* receiver_p);
 void AllocateBuffersSizes(Receiver_Params* receiver_p, char msg_str_size[10]);
 void CleanReceiverRound(Receiver_Params* receiver_p);
