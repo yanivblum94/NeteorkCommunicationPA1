@@ -41,7 +41,7 @@ void InitChannelSetup(Channel_Params* ch_p, struct sockaddr_in* sender_addr, str
     assertion(listen(ch_p->receiver_sock, SOMAXCONN), "Listening to receiver socket failed", WSAGetLastError());
 }
 
-bool get_user_output() {
+bool GetUserOutput() {
     char input[100] = { 0 };
     printf("continue? (yes/no)\n");
     int r = scanf("%99s", input);

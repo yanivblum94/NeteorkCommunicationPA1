@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
     InitChannelSetup(channel_p, &sender_addr, &receiver_addr);
     //needs to generate noise
     while (to_continue) {
-        channel_p->sender_accepted_sock = accpet(channel_p->sender_sock, NULL, NULL);
+        channel_p->sender_accepted_sock = accept(channel_p->sender_sock, NULL, NULL);
         assertion(INVALID_SOCKET == channel_p->sender_accepted_sock, "Accept failed on Sender's Socket", WSAGetLastError());
         channel_p->receiver_accepted_sock = accept(channel_p->receiver_sock, NULL, NULL);
         assertion(INVALID_SOCKET == channel_p->receiver_accepted_sock, "Accept failed on Receiver's Socket", WSAGetLastError());
@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
         CloseConnections(channel_p->receiver_accepted_sock);
 
         //print channel output
-        to_continue = get_user_output();
+        to_continue = GetUserOutput();
     }
 
     CloseConnections(channel_p->sender_sock);
