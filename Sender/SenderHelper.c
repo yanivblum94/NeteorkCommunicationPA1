@@ -116,40 +116,6 @@ void hammingEncode(char* originMsg, char* encodedMsg) {
 }
 
 
-// should be in the reciver + didnt check it yet 
-char* hammingDecode(char* codedMsg) {
-	int i = 1, xorResult = 0;
-	int total = 0;
-	char result[26] = "";
-	//add function to copy from codedMsg to result on relevant indexes naively temporary 
-	while (i <= 32) {
-		total = total + (int)(codedMsg[i]);
-		if (codedMsg[i]) {
-			xorResult = xorResult ^ i;
-		}
-		i++;
-	}
-	if (xorResult) { //got a number 
-		if ((total % 2) == 1 && codedMsg[0]) { //matching p0 and total 1's 
-			result[xorResult] = (result[xorResult]) ? '0' : '1';
-		}
-		else {
-			// got two mistakes - TODO ask on forum how to handle ? 
-
-		}
-	}
-	else {
-		if ((total % 2) == 1 && codedMsg[0]) { //matching p0 and total 1's 
-			return result;
-		}
-		else { // miss match only on index 0 
-			result[0] = (result[xorResult]) ? '0' : '1';
-		}
-	}
-
-	return result;
-
-}
 
 // return the number of BYTES in the file 
 int getFileSize(FILE* file) {
