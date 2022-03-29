@@ -66,3 +66,10 @@ int write_to_sock(SOCKET s, char* data, int len) {
 	assertion(res == len, "Writing to socket failed", WSAGetLastError());
 	return res;
 }
+
+void charsCopy(char* copyTo, char* copyFrom, int start, int length) {
+	for (int i = 0; i < length; i++)
+	{
+		copyTo[start + i] = copyFrom[i];
+	}
+}

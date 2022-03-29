@@ -12,10 +12,10 @@ int main(int argc, char* argv[])
 	WSADATA  wsaData;
 	struct sockaddr_in remote_addr;
 	char userInput[MAX_FILE_NAME_LEN];
-	char msgAfterRead[MSG_SIZE*2];
-	char msgRepBinary[BLOCK_SIZE_BITS*2];
-	char msgAfterHamming[HAMM_MSG_SIZE*2];
-	char preHamming[MSG_SIZE*2];
+	char msgAfterRead[MSG_SIZE];
+	char msgRepBinary[BLOCK_SIZE_BITS];
+	char msgAfterHamming[HAMM_MSG_SIZE];
+	char preHamming[MSG_SIZE];
 	char* BINARY_MESSAGE;
 	char* SENDER_BUFFER;
 	SOCKET s;
@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
 	//connect
 	assertion(connect(s, (SOCKADDR*)&remote_addr, sizeof(struct sockaddr)) != SOCKET_ERROR, "connection falied", WSAGetLastError());
 
-
+	printf("ip=%s, port=%s\n", argv[1], argv[2]);
 	//main loop process
 	while (1) {
 		printf("enter file name:\n");
@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
 
 		for (int i = 0; i < (fileSizeBytes*8/MSG_SIZE); i++)
 		{
-			charsCopy(preHamming, BINARY_MESSAGE, i * MSG_SIZE, MSG_SIZE);
+			charsCopyHamm(preHamming, BINARY_MESSAGE, i * MSG_SIZE, MSG_SIZE);
 			hammingEncode(preHamming, msgAfterHamming);
 			charsCopy(SENDER_BUFFER, msgAfterHamming, i * HAMM_MSG_SIZE, HAMM_MSG_SIZE);
 		}

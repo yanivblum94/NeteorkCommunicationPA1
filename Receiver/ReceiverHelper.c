@@ -48,43 +48,37 @@ void CleanReceiverRound(Receiver_Params* receiver_p) {
 
 void fromFixedToOrigin(char* fixed, char* origin, int decodedSize) {
 	int temp; 
-	char c=' ', buffer[9];
+	char buffer[9];
 	for (int i = 0; i < (decodedSize/8); i++)
 	{
 		temp = (fixed[i * 8] == '1') ? 1 : 0;
 		for (int j = 1; j < 8; j++)
 		{
-			temp << 1; 
+			temp = temp << 1; 
 			if (fixed[i * 8 + j] == '1') {
 				temp += 1;
 			}
 		}
-		itoa(c, buffer, 2);
+		itoa(temp, buffer, 2);
 		origin[i] = strtol(buffer, 0, 2);
 	}
 }
 
-void charsCopy(char* copyTo, char* copyFrom, int start, int length) {
-	for (int i = 0; i < length; i++)
-	{
-		copyTo[start + i] = copyFrom[i];
-	}
-}
 
 /* 
 	Function to cut from big encoded msg a 31 bits encoded msg 
 	currEncoded size should be 32 for comfort reasons 
 */
 void cuttingHamming(char* currEncoded, char* wholeMsg, int start, int len) {
-	for (int i = 1; i < len; i++)
+	for (int i = 1; i <= len; i++)
 	{
-		currEncoded[i] = wholeMsg[start + i];
+		currEncoded[i] = wholeMsg[start + i -1];
 	}
 }
 
 void hammingDecode(char* codedMsg, char* fixed_message) {
 	int i = 1, p1 = 0, p2 = 0, p4 = 0, p8 = 0, p16 = 0, badSum = 0 ;
-	while (i <= 32)
+	while (i < 32)
 	{
 		if ((1 & i) == 1 && codedMsg[i] == '1') {
 			p1++;
@@ -103,6 +97,22 @@ void hammingDecode(char* codedMsg, char* fixed_message) {
 		}
 		i++;
 	}
+	if ((p1 % 2)) {
+		badSum += 1;
+	}
+	if ((p2 % 2)) {
+		badSum += 2;
+	}
+	if ((p4 % 2)) {
+		badSum += 4;
+	}
+	if ((p8 % 2)) {
+		badSum += 8;
+	}
+	if ((p16 % 2)) {
+		badSum += 16;
+	}
+	/*
 	if (((p1 % 2) && codedMsg[1] == '0') || (!(p1 % 2) && codedMsg[1] == '1')) {
 		badSum += 1;
 	}
@@ -112,12 +122,13 @@ void hammingDecode(char* codedMsg, char* fixed_message) {
 	if (((p4 % 2) && codedMsg[4] == '0') || (!(p4 % 2) && codedMsg[4] == '1')) {
 		badSum += 4;
 	}
-	if (((p1 % 8) && codedMsg[8] == '0') || (!(p8 % 2) && codedMsg[8] == '1')) {
+	if (((p8 % 2) && codedMsg[8] == '0') || (!(p8 % 2) && codedMsg[8] == '1')) {
 		badSum += 8;
 	}
-	if (((p1 % 16) && codedMsg[16] == '0') || (!(p16 % 2) && codedMsg[16] == '1')) {
+	if (((p16 % 2) && codedMsg[16] == '0') || (!(p16 % 2) && codedMsg[16] == '1')) {
 		badSum += 16;
-	}
+	}*/
+	//TOTO : add test for if lipped and increase counter
 	codedMsg[badSum] = (codedMsg[badSum] == '1') ? '0' : '1';
 	hammingNarrowMsg(codedMsg, fixed_message);
 }

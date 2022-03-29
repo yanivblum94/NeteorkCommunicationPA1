@@ -19,7 +19,7 @@ void PrintOutput(int blocks) {
 
 // converting 26 bytes (chars) to 208 binary chars representing 
 void convertMsgToBinaryChars(char* originMsg, char* binaryMsg) {
-	char temp[26];
+	char temp[8];
 	for (int i = 0; i < MSG_SIZE; i++)
 	{
 		convertCharToBinary(originMsg[i], temp);
@@ -41,13 +41,6 @@ void convertCharToBinary(char c, char* binaryCharRep) {
 	}
 }
 
-
-void charsCopy(char* copyTo, char* copyFrom, int start, int length) {
-	for (int i = 0; i < length; i++)
-	{
-		copyTo[start + i] = copyFrom[i];
-	}
-}
 
 void charsCopyHamm(char* copyTo, char* copyFrom, int start, int length) {
 	for (int i = 0; i < length; i++)
@@ -134,7 +127,7 @@ int getFileSize(FILE* file) {
 
 // function to send the file's size as string given with int
 void sendFileSize(int size, SOCKET s) {
-	char* filesSizeInString[SIZE_MSG_LEN];
+	char filesSizeInString[SIZE_MSG_LEN];
 	itoa(size, filesSizeInString, SIZE_MSG_LEN);
 	write_to_sock(s, filesSizeInString, SIZE_MSG_LEN);
 }

@@ -28,10 +28,11 @@ int main(int argc, char* argv[])
         size_temp = read_from_sock(channel_p->sender_accepted_sock, channel_p->msg_size_str, SIZE_MSG_LEN);
         channel_p->msg_size = atoi(channel_p->msg_size_str);
         channel_p->message = (char*)calloc(channel_p->msg_size, sizeof(char));
-        size_temp = read_from_sock(channel_p, channel_p->message, channel_p->msg_size);
+        size_temp = read_from_sock(channel_p->sender_accepted_sock, channel_p->message, channel_p->msg_size);
         printf("Received message from Sender [%dB]\n", (channel_p->msg_size / 8));
 
         //needs to add noise
+        channel_p->message_sent = channel_p->message;
 
         //send size and message
         size_temp = write_to_sock(channel_p->receiver_accepted_sock, channel_p->msg_size_str, SIZE_MSG_LEN);

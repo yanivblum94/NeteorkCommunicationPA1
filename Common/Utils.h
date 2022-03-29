@@ -23,6 +23,8 @@ bool BindSocket(SOCKET s, struct sockaddr_in* addr);
 int read_from_sock(SOCKET s, char* data, int len);
 int write_to_sock(SOCKET s, char* data, int len);
 void wsa_clean();
+void charsCopy(char* copyTo, char* copyFrom, int start, int length);
+
 
 inline void assertion(int condition, char* message, int err_idx) {
 	if (!(condition)) {

@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
 		{
 			cuttingHamming(curr_hamming_msg, receiver_p->encoded_message, i * HAMM_MSG_SIZE, HAMM_MSG_SIZE);
 			hammingDecode(curr_hamming_msg, partial_decoded_msg);
-			charsCopy(receiver_p->fixed_message, curr_hamming_msg, i * MSG_SIZE, MSG_SIZE);
+			charsCopy(receiver_p->fixed_message, partial_decoded_msg, i * MSG_SIZE, MSG_SIZE);
 		}
 		fromFixedToOrigin(receiver_p->fixed_message, receiver_p->origin_message, receiver_p->decoded_message_size);
 

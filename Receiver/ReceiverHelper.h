@@ -25,5 +25,8 @@ void PrintOutput(Receiver_Params* receiver_p);
 void AllocateBuffersSizes(Receiver_Params* receiver_p, char msg_str_size[10]);
 void CleanReceiverRound(Receiver_Params* receiver_p);
 void hammingNarrowMsg(char* encoded, char* result);
+void cuttingHamming(char* currEncoded, char* wholeMsg, int start, int len);
+void hammingDecode(char* codedMsg, char* fixed_message);
+void fromFixedToOrigin(char* fixed, char* origin, int decodedSize);
 
 #endif
