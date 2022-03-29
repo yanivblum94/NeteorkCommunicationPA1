@@ -18,7 +18,8 @@ void InitChannelParams(int argc, char* argv[], Channel_Params* ch_p) {
         ch_p->cycle_length = atoi(argv[2]);
         ch_p->noise_type = DET;
     }
-
+    ch_p->flipped_bits = 0;
+    
     ch_p->ip = IP_LISTEN_ALL;
     ch_p->sender_port = 0;
     ch_p->recevier_port = 0;
@@ -28,8 +29,8 @@ void InitChannelParams(int argc, char* argv[], Channel_Params* ch_p) {
 }
 
 void InitChannelSetup(Channel_Params* ch_p, struct sockaddr_in* sender_addr, struct sockaddr_in* receiver_addr) {
-    InitSockAddr(sender_addr, 50928, "127.0.0.1");
-    InitSockAddr(receiver_addr, 50929, "127.0.0.1");
+    InitSockAddr(sender_addr, ch_p->sender_port, ch_p->ip);
+    InitSockAddr(receiver_addr, ch_p->recevier_port, ch_p->ip);
     BindSocket(ch_p->sender_sock, sender_addr);
     BindSocket(ch_p->receiver_sock, receiver_addr);
     int addlen = sizeof(SOCKADDR);
@@ -46,4 +47,39 @@ bool GetUserOutput() {
     printf("continue? (yes/no)\n");
     int r = scanf("%99s", input);
     return strcmp(input, "no");
+}
+
+void ApplyDet(Channel_Params* channel_p) {
+    channel_p->det_counter = channel_p->cycle_length-1;
+    for (int i = 0; i < channel_p->msg_size; i++) {
+        if (channel_p->det_counter == 0) {
+            channel_p->message_sent[i] = (channel_p->message[i] == '1') ? '0' : '1';
+            channel_p->det_counter = channel_p->cycle_length-1;
+            channel_p->flipped_bits++;
+        }
+        else {
+            channel_p->message_sent[i] = channel_p->message[i];
+            channel_p->det_counter--;
+        }
+    }
+}
+
+void ApplyRandom(Channel_Params* channel_p) {
+    unsigned rand_num;
+    for (int i = 0; i < channel_p->msg_size; i++) {
+           rand_s(&rand_num);
+           // we use one rand to get 16 bits integer instead of 2 - efficient random
+           bool even = (rand_num % 2 == 0);
+           rand_num = rand_num << 1;
+           if (!even)
+               rand_num++;
+           if (((float)rand_num / (float)RAND_MAX) <= channel_p->prob)
+           {
+               channel_p->message_sent[i] = (channel_p->message[i] == '1') ? '0' : '1';
+               channel_p->flipped_bits++;
+           }
+           else {
+               channel_p->message_sent[i] = channel_p->message[i];
+           }
+    }
 }
