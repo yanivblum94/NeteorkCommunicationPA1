@@ -13,3 +13,4 @@ project
 #define IP_LISTEN_ALL "0.0.0.0"
 #define SIZE_MSG_LEN 10
 #define MAX_FILE_NAME_LEN 2048
+#define BLOCK_SIZE_BITS 8*26

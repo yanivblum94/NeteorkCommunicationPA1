@@ -19,9 +19,8 @@ void PrintOutput(int blocks) {
 
 // converting 26 bytes (chars) to 208 binary chars representing 
 void convertMsgToBinaryChars(char* originMsg, char* binaryMsg) {
-	int size = sizeof(originMsg);
-	char* temp[26];
-	for (int i = 0; i < size; i++)
+	char temp[26];
+	for (int i = 0; i < MSG_SIZE; i++)
 	{
 		convertCharToBinary(originMsg[i], temp);
 		for (int j = 0; j < 8; j++)
@@ -49,17 +48,23 @@ void charsCopy(char* copyTo, char* copyFrom, int start, int length) {
 		copyTo[start + i] = copyFrom[i];
 	}
 }
+
+void charsCopyHamm(char* copyTo, char* copyFrom, int start, int length) {
+	for (int i = 0; i < length; i++)
+	{
+		copyTo[i] = copyFrom[start + i];
+	}
+}
 /*
 	function to create a 32 long char array from the origin array with integers 
 	and each redundant bit has 0 initially
 */
 
 void createIntArray(char* originMsg, int* originMsgInt) {
-	int size = sizeof(originMsg);
 	int j = 0, i=0;
 	originMsgInt[0] = 0;
-	while (i <= 32) {
-		if (i == 1 || i == 2 || i == 4 || i == 8 || i == 16) {
+	while (i <= 31) {
+		if (i==0 || i == 1 || i == 2 || i == 4 || i == 8 || i == 16) {
 			originMsgInt[i] = 0;
 		}
 		else {
@@ -71,8 +76,7 @@ void createIntArray(char* originMsg, int* originMsgInt) {
 }
 
 void createCharArray(char* targetArray, int* sourceArray) {
-	int size = sizeof(sourceArray);
-	for (int i = 0; i < size; i++)
+	for (int i = 0; i <= HAMM_MSG_SIZE; i++)
 	{
 		targetArray[i] = (sourceArray[i]) ? '1' : '0';
 	}
@@ -83,10 +87,10 @@ void createCharArray(char* targetArray, int* sourceArray) {
 // TODO: test with an example - might have problem with the msg order (little / big endian ) 
 void hammingEncode(char* originMsg, char* encodedMsg) {   
 	int i = 1,  p1 = 0, p2 = 0, p4 = 0, p8 = 0, p16 = 0;
-	int* originMsgInt[32];
-	char* temp[32];
+	int originMsgInt[32];
+	char temp[32];
 	createIntArray(originMsg, originMsgInt);
-	while (i <= 32) {
+	while (i <= 31) {
 		if ((1 & i) == 1 && originMsgInt[i]) {
 			p1++;
 		}
@@ -111,7 +115,7 @@ void hammingEncode(char* originMsg, char* encodedMsg) {
 	originMsgInt[16] = (p16 % 2) ? 1 : 0;
 
 	createCharArray(temp, originMsgInt);
-	charsCopy(encodedMsg, temp, 1, 31);
+	charsCopyHamm(encodedMsg, temp, 1, 31);
 
 }
 
@@ -137,8 +141,6 @@ void sendFileSize(int size, SOCKET s) {
 
 void FinishOneRound(SOCKET s, FILE* file) {
 	CloseConnections(s);
-	free(SENDER_BUFFER);
-	free(BINARY_MESSAGE);
 	wsa_clean();
 	fclose(file);
 }

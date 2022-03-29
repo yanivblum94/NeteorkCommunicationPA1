@@ -57,12 +57,12 @@ bool BindSocket(SOCKET s, struct sockaddr_in* addr) {
 
 int read_from_sock(SOCKET s, char* data, int len) {
 	int res = recv(s, data, len, 0);
-	assertion(res != len, "Reading from socket failed", WSAGetLastError());
+	assertion(res == len, "Reading from socket failed", WSAGetLastError());
 	return res;
 }
 
 int write_to_sock(SOCKET s, char* data, int len) {
 	int res = send(s, data, len, 0);
-	assertion(res != len, "Writing to socket failed", WSAGetLastError());
+	assertion(res == len, "Writing to socket failed", WSAGetLastError());
 	return res;
 }
