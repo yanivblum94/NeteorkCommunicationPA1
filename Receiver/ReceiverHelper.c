@@ -10,6 +10,7 @@ void InitServerParams(char* argv[], Receiver_Params* receiver_p) {
 	printf("ip=%s, port=%d\n", receiver_p->ip, receiver_p->port);
 	receiver_p->socket = SocketInit();
 	receiver_p->quit = false;
+	receiver_p->bits_fixed = 0;
 }
 
 void OpenOutputFile(Receiver_Params* receiver_p) {
@@ -33,9 +34,9 @@ void AllocateBuffersSizes(Receiver_Params* receiver_p, char msg_str_size[10]) {
 }
 
 void PrintOutput(Receiver_Params* receiver_p){
-	printf("recevid: %d bytes\n", (receiver_p->encoded_message_size/8));
+	printf("received: %d bytes\n", (receiver_p->encoded_message_size/8));
 	printf("wrote: %d bytes\n", (receiver_p->decoded_message_size / 8));
-	printf("corrected %d errors\n", (receiver_p->bits_fixed / 8));
+	printf("corrected %d errors\n", (receiver_p->bits_fixed));
 }
 
 void CleanReceiverRound(Receiver_Params* receiver_p) {
@@ -76,7 +77,7 @@ void cuttingHamming(char* currEncoded, char* wholeMsg, int start, int len) {
 	}
 }
 
-void hammingDecode(char* codedMsg, char* fixed_message) {
+void hammingDecode(char* codedMsg, char* fixed_message, Receiver_Params* receiver_p) {
 	int i = 1, p1 = 0, p2 = 0, p4 = 0, p8 = 0, p16 = 0, badSum = 0 ;
 	while (i < 32)
 	{
@@ -112,24 +113,11 @@ void hammingDecode(char* codedMsg, char* fixed_message) {
 	if ((p16 % 2)) {
 		badSum += 16;
 	}
-	/*
-	if (((p1 % 2) && codedMsg[1] == '0') || (!(p1 % 2) && codedMsg[1] == '1')) {
-		badSum += 1;
-	}
-	if (((p2 % 2) && codedMsg[2] == '0') || (!(p2 % 2) && codedMsg[2] == '1')) {
-		badSum += 2;
-	}
-	if (((p4 % 2) && codedMsg[4] == '0') || (!(p4 % 2) && codedMsg[4] == '1')) {
-		badSum += 4;
-	}
-	if (((p8 % 2) && codedMsg[8] == '0') || (!(p8 % 2) && codedMsg[8] == '1')) {
-		badSum += 8;
-	}
-	if (((p16 % 2) && codedMsg[16] == '0') || (!(p16 % 2) && codedMsg[16] == '1')) {
-		badSum += 16;
-	}*/
 	//TOTO : add test for if lipped and increase counter
-	codedMsg[badSum] = (codedMsg[badSum] == '1') ? '0' : '1';
+	if (badSum += 0) {
+		codedMsg[badSum] = (codedMsg[badSum] == '1') ? '0' : '1';
+		receiver_p->bits_fixed++;
+	}
 	hammingNarrowMsg(codedMsg, fixed_message);
 }
 

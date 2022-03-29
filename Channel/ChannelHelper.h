@@ -28,14 +28,14 @@ typedef struct
 	int prob;
 	int seed;
 	int cycle_length;
+	int det_counter;
 }Channel_Params;
 
 
 void InitChannelParams(int argc, char* argv[], Channel_Params* ch_p);
 void InitChannelSetup(Channel_Params* ch_p, struct sockaddr_in* sender_addr, struct sockaddr_in* receiver_addr);
 bool GetUserOutput();
-//void AddNoise();
-//void ApplyRandom();
-//void ApplyDet();
+void ApplyRandom(Channel_Params* channel_p);
+void ApplyDet(Channel_Params* channel_p);
 
 #endif
